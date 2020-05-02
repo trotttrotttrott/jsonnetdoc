@@ -37,3 +37,36 @@ func TestGetJsonnetFiles(t *testing.T) {
 		}
 	}
 }
+
+func TestParseJsonnetFile(t *testing.T) {
+	tests := map[string]struct {
+		path   string
+		expect jsonnetFile
+	}{
+		"foo": {
+			"testdata/foo.jsonnet",
+			jsonnetFile{
+				name: "foo",
+			},
+		},
+		"bar": {
+			"testdata/bar.libsonnet",
+			jsonnetFile{
+				name: "bar",
+			},
+		},
+	}
+	for testName, test := range tests {
+		t.Logf("Running test case, %q...", testName)
+		jf, err := parseJsonnetFile(test.path)
+		if err != nil {
+			t.Errorf("Unexpected error getting Jsonnet files: %s", err)
+		}
+		if jf.name != test.expect.name {
+			t.Errorf("Expected jsonnetFile name %q, got %q", test.expect.name, jf.name)
+		}
+		if len(jf.functions) != len(test.expect.functions) {
+			t.Errorf("Expected %d file(s), got %d", len(test.expect.functions), len(jf.functions))
+		}
+	}
+}

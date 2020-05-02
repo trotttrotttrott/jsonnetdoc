@@ -3,11 +3,23 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/go-clix/cli"
 )
+
+type jsonnetFunction struct {
+	description string
+	params      map[string]string
+	retrn       string
+}
+
+type jsonnetFile struct {
+	name      string
+	functions []jsonnetFunction
+}
 
 func main() {
 	rootCmd := &cli.Command{
@@ -30,22 +42,37 @@ func rootCmd(cmd *cli.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(files)
+	var apiDocs []jsonnetFile
+	for _, f := range files {
+		jf, err := parseJsonnetFile(f)
+		if err != nil {
+			return err
+		}
+		apiDocs = append(apiDocs, jf)
+	}
 	return nil
 }
 
-func getJsonnetFiles(path string) ([]string, error) {
+func getJsonnetFiles(p string) ([]string, error) {
 	var files []string
-	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(p, func(p string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if !info.IsDir() &&
 			strings.HasSuffix(info.Name(), ".jsonnet") ||
 			strings.HasSuffix(info.Name(), ".libsonnet") {
-			files = append(files, path)
+			files = append(files, p)
 		}
 		return nil
 	})
 	return files, err
+}
+
+func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
+	_, f := path.Split(p)
+	name := strings.TrimSuffix(f, path.Ext(f))
+	jf.name = name
+
+	return
 }
