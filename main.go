@@ -149,6 +149,9 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 
 func generateMarkdown(apiDocs []jsonnetFile) (string, error) {
 	md := []string{"# API Docs"}
+	md = append(md, `
+Generated API documentation from JSDoc style comments.
+`)
 	for _, jfile := range apiDocs {
 		if len(jfile.Functions) == 0 {
 			md = append(md, fmt.Sprintf("## %s", jfile.Name))

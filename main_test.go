@@ -124,6 +124,9 @@ func TestGenerateMarkdown(t *testing.T) {
 		"foo": {
 			path: "testdata/foo.jsonnet",
 			expect: `# API Docs
+
+Generated API documentation from JSDoc style comments.
+
 ## foo.new
 Description text, file: foo, function: new
 
