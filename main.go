@@ -116,7 +116,10 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 			case descRegexp.Match(l):
 				desc = append(desc, bytes.TrimLeft(l, "* "))
 			case paramRegexp.Match(l):
-				param := bytes.SplitN(bytes.TrimLeft(l, "* @param"), []byte(" "), 2)
+				param := bytes.SplitN(
+					bytes.TrimPrefix(bytes.TrimLeft(l, " "), []byte("* @param ")),
+					[]byte(" "), 2,
+				)
 				if len(param) > 1 {
 					params[string(param[0])] = string(param[1])
 				} else if len(param) == 1 {
