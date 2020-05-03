@@ -144,18 +144,15 @@ func generateMarkdown(apiDocs []jsonnetFile) (string, error) {
 		md = append(md, fmt.Sprintf("## %s", jfile.Name))
 		for _, jfunc := range jfile.Functions {
 			md = append(md, jfunc.Description)
-			md = append(md, "### Params")
 			params := make([]string, 0, len(jfunc.Params))
 			for k := range jfunc.Params {
 				params = append(params, k)
 			}
 			sort.Strings(params)
 			for _, param := range params {
-				md = append(md, fmt.Sprintf("#### %s", param))
-				md = append(md, jfunc.Params[param])
+				md = append(md, fmt.Sprintf("* **%s**: %s", param, jfunc.Params[param]))
 			}
-			md = append(md, "### Return")
-			md = append(md, jfunc.Return)
+			md = append(md, fmt.Sprintf("\n_returns_ %s", jfunc.Return))
 		}
 	}
 	return strings.Join(md, "\n"), nil

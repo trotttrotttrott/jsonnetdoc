@@ -118,11 +118,9 @@ func TestGenerateMarkdown(t *testing.T) {
 ## foo
 A jsonnet file called "foo"
 
-### Params
-#### foo
-a param called "foo"
-### Return
-a new "foo"`,
+* **foo**: a param called "foo"
+
+_returns_ a new "foo"`,
 		},
 	}
 	for testName, test := range tests {
