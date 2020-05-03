@@ -53,7 +53,7 @@ func TestParseJsonnetFile(t *testing.T) {
 						Params: map[string]string{
 							"foo": "a param called \"foo\"",
 						},
-						Retrn: "a new \"foo\"",
+						Return: "a new \"foo\"",
 					},
 				},
 			},
@@ -70,7 +70,7 @@ func TestParseJsonnetFile(t *testing.T) {
 							"barbar":         "a param called \"barbar\"",
 							"no_description": "",
 						},
-						Retrn: "a new \"bar\"",
+						Return: "a new \"bar\"",
 					},
 				},
 			},
@@ -100,8 +100,8 @@ func TestParseJsonnetFile(t *testing.T) {
 					t.Errorf("Expected param descirption %q for %q, got %q", test.expect.Functions[i].Params[param], param, desc)
 				}
 			}
-			if fn.Retrn != test.expect.Functions[i].Retrn {
-				t.Errorf("Expected return %q, got %q", test.expect.Functions[i].Retrn, fn.Retrn)
+			if fn.Return != test.expect.Functions[i].Return {
+				t.Errorf("Expected return %q, got %q", test.expect.Functions[i].Return, fn.Return)
 			}
 		}
 	}

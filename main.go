@@ -17,7 +17,7 @@ import (
 type jsonnetFunction struct {
 	Description string            `json:"description"`
 	Params      map[string]string `json:"params"`
-	Retrn       string            `json:"return"`
+	Return      string            `json:"return"`
 }
 
 type jsonnetFile struct {
@@ -114,7 +114,7 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 			jsonnetFunction{
 				Description: string(bytes.Join(desc, []byte("\n"))),
 				Params:      params,
-				Retrn:       string(retrn),
+				Return:      string(retrn),
 			},
 		)
 	}
