@@ -171,7 +171,9 @@ Generated API documentation from JSDoc style comments.
 			for _, param := range params {
 				md = append(md, fmt.Sprintf("* **%s**: %s", param, jfunc.Params[param]))
 			}
-			md = append(md, fmt.Sprintf("\n_returns_ %s", jfunc.Return))
+			if jfunc.Return != "" {
+				md = append(md, fmt.Sprintf("\n_returns_ %s", jfunc.Return))
+			}
 		}
 	}
 	return strings.Join(md, "\n"), nil
