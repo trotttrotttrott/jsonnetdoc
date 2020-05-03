@@ -5,7 +5,10 @@
    *
    * Multi-paragraph as well!
    *
-   * @param bar a param called "bar".
+   * @param bar a param called "bar"
+   * @param barbar a param called "barbar"
+   * @param no_description
+   * @param
    * @return a new "bar"
    */
   new(

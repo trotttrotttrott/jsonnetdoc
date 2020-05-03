@@ -50,6 +50,9 @@ func TestParseJsonnetFile(t *testing.T) {
 				functions: []jsonnetFunction{
 					jsonnetFunction{
 						description: "A jsonnet file called \"foo\"\n",
+						params: map[string]string{
+							"foo": "a param called \"foo\"",
+						},
 					},
 				},
 			},
@@ -61,6 +64,11 @@ func TestParseJsonnetFile(t *testing.T) {
 				functions: []jsonnetFunction{
 					jsonnetFunction{
 						description: "A libsonnet file called \"bar\"\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
+						params: map[string]string{
+							"bar":            "a param called \"bar\"",
+							"barbar":         "a param called \"barbar\"",
+							"no_description": "",
+						},
 					},
 				},
 			},
@@ -81,6 +89,14 @@ func TestParseJsonnetFile(t *testing.T) {
 		for i, fn := range jf.functions {
 			if fn.description != test.expect.functions[i].description {
 				t.Errorf("Expected description %q, got %q", test.expect.functions[i].description, fn.description)
+			}
+			if len(fn.params) != len(test.expect.functions[i].params) {
+				t.Errorf("Expected %d param(s), got %d", len(test.expect.functions[i].params), len(fn.params))
+			}
+			for param, desc := range fn.params {
+				if desc != test.expect.functions[i].params[param] {
+					t.Errorf("Expected param descirption %q for %q, got %q", test.expect.functions[i].params[param], param, desc)
+				}
 			}
 		}
 	}
