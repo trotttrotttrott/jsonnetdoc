@@ -2,7 +2,7 @@
   /**
    * Description text, file: foo, function: new
    *
-   * @name new
+   * @name foo.new
    *
    * @param foo a param called "foo"
    * @param moo a param called "moo"

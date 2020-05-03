@@ -50,7 +50,7 @@ func TestParseJsonnetFile(t *testing.T) {
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
 						Description: "Description text, file: foo, function: new\n\n\n",
-						Name:        "new",
+						Name:        "foo.new",
 						Params: map[string]string{
 							"foo": "a param called \"foo\"",
 							"moo": "a param called \"moo\"",
