@@ -97,12 +97,45 @@ func TestParseJsonnetFile(t *testing.T) {
 			}
 			for param, desc := range fn.Params {
 				if desc != test.expect.Functions[i].Params[param] {
-					t.Errorf("Expected param descirption %q for %q, got %q", test.expect.Functions[i].Params[param], param, desc)
+					t.Errorf("Expected param description %q for %q, got %q", test.expect.Functions[i].Params[param], param, desc)
 				}
 			}
 			if fn.Return != test.expect.Functions[i].Return {
 				t.Errorf("Expected return %q, got %q", test.expect.Functions[i].Return, fn.Return)
 			}
+		}
+	}
+}
+
+func TestGenerateMarkdown(t *testing.T) {
+	tests := map[string]struct {
+		path   string
+		expect string
+	}{
+		"foo": {
+			path: "testdata/foo.jsonnet",
+			expect: `# API Docs
+## foo
+A jsonnet file called "foo"
+
+### Params
+#### foo
+a param called "foo"
+### Return
+a new "foo"`,
+		},
+	}
+	for testName, test := range tests {
+		t.Logf("Running test case, %q...", testName)
+		var apiDocs []jsonnetFile
+		jf, _ := parseJsonnetFile(test.path)
+		apiDocs = append(apiDocs, jf)
+		md, err := generateMarkdown(apiDocs)
+		if err != nil {
+			t.Errorf("Unexpected error parsing markdown: %s", err)
+		}
+		if md != test.expect {
+			t.Errorf("Expected:\n%s\ngot:\n\n%s", test.expect, md)
 		}
 	}
 }

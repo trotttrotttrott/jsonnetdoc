@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/go-clix/cli"
@@ -27,11 +28,12 @@ type jsonnetFile struct {
 
 func main() {
 	rootCmd := &cli.Command{
-		Use:   "jsonnetdoc <input-file|dir> <output-dir>",
+		Use:   "jsonnetdoc <input-file|dir>",
 		Short: "Documentation parser for Jsdoc style comments in Jsonnet",
 		Args:  cli.ArgsExact(1),
 		Run:   rootCmd,
 	}
+	rootCmd.Flags().Bool("markdown", false, "output markdown instead of JSON")
 	if err := rootCmd.Execute(); err != nil {
 		if err := rootCmd.Execute(); err != nil {
 			fmt.Println(err)
@@ -54,9 +56,23 @@ func rootCmd(cmd *cli.Command, args []string) error {
 		}
 		apiDocs = append(apiDocs, jf)
 	}
-
-	j, err := json.Marshal(apiDocs)
-	fmt.Println(string(j))
+	markdown, err := strconv.ParseBool(cmd.Flags().Lookup("markdown").Value.String())
+	if err != nil {
+		return err
+	}
+	if markdown {
+		md, err := generateMarkdown(apiDocs)
+		if err != nil {
+			return err
+		}
+		fmt.Println(md)
+	} else {
+		j, err := json.Marshal(apiDocs)
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(j))
+	}
 
 	return nil
 }
@@ -119,4 +135,22 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 		)
 	}
 	return
+}
+
+func generateMarkdown(apiDocs []jsonnetFile) (string, error) {
+	md := []string{"# API Docs"}
+	for _, jfile := range apiDocs {
+		md = append(md, fmt.Sprintf("## %s", jfile.Name))
+		for _, jfunc := range jfile.Functions {
+			md = append(md, jfunc.Description)
+			md = append(md, "### Params")
+			for pn, pd := range jfunc.Params {
+				md = append(md, fmt.Sprintf("#### %s", pn))
+				md = append(md, pd)
+			}
+			md = append(md, "### Return")
+			md = append(md, jfunc.Return)
+		}
+	}
+	return strings.Join(md, "\n"), nil
 }
