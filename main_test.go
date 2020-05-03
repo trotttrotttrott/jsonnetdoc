@@ -69,12 +69,20 @@ func TestParseJsonnetFile(t *testing.T) {
 				Name: "bar",
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
-						Description: "Description text, file: bar, function: new\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
+						Description: "Description text, file: bar, function: new\nIts got a multi-line description!\n\nMulti-paragraph as well!\n\n",
 						Name:        "",
 						Params: map[string]string{
 							"bar":            "a param called \"bar\"",
 							"barbar":         "a param called \"barbar\"",
 							"no_description": "",
+						},
+						Return: "a new \"bar\"",
+					},
+					jsonnetFunction{
+						Description: "Description text, file: bar, function: target\nTesting multiple functions in single file.\n\n",
+						Name:        "",
+						Params: map[string]string{
+							"bar": "a param called \"bar\"",
 						},
 						Return: "a new \"bar\"",
 					},

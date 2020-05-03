@@ -103,7 +103,7 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 	if err != nil {
 		return
 	}
-	r := regexp.MustCompile(`/\*\*(.|[\n])*\*/`)
+	r := regexp.MustCompile(`/\*\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/`)
 	docs := r.FindAll(content, -1)
 	for _, doc := range docs {
 		var desc [][]byte
