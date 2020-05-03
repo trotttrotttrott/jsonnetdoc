@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -144,9 +145,14 @@ func generateMarkdown(apiDocs []jsonnetFile) (string, error) {
 		for _, jfunc := range jfile.Functions {
 			md = append(md, jfunc.Description)
 			md = append(md, "### Params")
-			for pn, pd := range jfunc.Params {
-				md = append(md, fmt.Sprintf("#### %s", pn))
-				md = append(md, pd)
+			params := make([]string, 0, len(jfunc.Params))
+			for k := range jfunc.Params {
+				params = append(params, k)
+			}
+			sort.Strings(params)
+			for _, param := range params {
+				md = append(md, fmt.Sprintf("#### %s", param))
+				md = append(md, jfunc.Params[param])
 			}
 			md = append(md, "### Return")
 			md = append(md, jfunc.Return)

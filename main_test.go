@@ -135,7 +135,7 @@ a new "foo"`,
 			t.Errorf("Unexpected error parsing markdown: %s", err)
 		}
 		if md != test.expect {
-			t.Errorf("Expected:\n%s\ngot:\n\n%s", test.expect, md)
+			t.Errorf("Expected:\n%s\n\ngot:\n\n%s", test.expect, md)
 		}
 	}
 }
