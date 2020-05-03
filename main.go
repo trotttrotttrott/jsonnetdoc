@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,21 +15,21 @@ import (
 )
 
 type jsonnetFunction struct {
-	description string
-	params      map[string]string
-	retrn       string
+	Description string            `json:"description"`
+	Params      map[string]string `json:"params"`
+	Retrn       string            `json:"return"`
 }
 
 type jsonnetFile struct {
-	name      string
-	functions []jsonnetFunction
+	Name      string            `json:"name"`
+	Functions []jsonnetFunction `json:"functions"`
 }
 
 func main() {
 	rootCmd := &cli.Command{
 		Use:   "jsonnetdoc <input-file|dir> <output-dir>",
 		Short: "Documentation parser for Jsdoc style comments in Jsonnet",
-		Args:  cli.ArgsExact(2),
+		Args:  cli.ArgsExact(1),
 		Run:   rootCmd,
 	}
 	if err := rootCmd.Execute(); err != nil {
@@ -53,6 +54,10 @@ func rootCmd(cmd *cli.Command, args []string) error {
 		}
 		apiDocs = append(apiDocs, jf)
 	}
+
+	j, err := json.Marshal(apiDocs)
+	fmt.Println(string(j))
+
 	return nil
 }
 
@@ -75,7 +80,7 @@ func getJsonnetFiles(p string) ([]string, error) {
 func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 	_, f := path.Split(p)
 	name := strings.TrimSuffix(f, path.Ext(f))
-	jf.name = name
+	jf.Name = name
 	content, err := ioutil.ReadFile(p)
 	if err != nil {
 		return
@@ -104,12 +109,12 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 				retrn = bytes.TrimLeft(l, "* @return")
 			}
 		}
-		jf.functions = append(
-			jf.functions,
+		jf.Functions = append(
+			jf.Functions,
 			jsonnetFunction{
-				description: string(bytes.Join(desc, []byte("\n"))),
-				params:      params,
-				retrn:       string(retrn),
+				Description: string(bytes.Join(desc, []byte("\n"))),
+				Params:      params,
+				Retrn:       string(retrn),
 			},
 		)
 	}

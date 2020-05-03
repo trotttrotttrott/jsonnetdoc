@@ -46,14 +46,14 @@ func TestParseJsonnetFile(t *testing.T) {
 		"foo": {
 			"testdata/foo.jsonnet",
 			jsonnetFile{
-				name: "foo",
-				functions: []jsonnetFunction{
+				Name: "foo",
+				Functions: []jsonnetFunction{
 					jsonnetFunction{
-						description: "A jsonnet file called \"foo\"\n",
-						params: map[string]string{
+						Description: "A jsonnet file called \"foo\"\n",
+						Params: map[string]string{
 							"foo": "a param called \"foo\"",
 						},
-						retrn: "a new \"foo\"",
+						Retrn: "a new \"foo\"",
 					},
 				},
 			},
@@ -61,16 +61,16 @@ func TestParseJsonnetFile(t *testing.T) {
 		"bar": {
 			"testdata/bar.libsonnet",
 			jsonnetFile{
-				name: "bar",
-				functions: []jsonnetFunction{
+				Name: "bar",
+				Functions: []jsonnetFunction{
 					jsonnetFunction{
-						description: "A libsonnet file called \"bar\"\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
-						params: map[string]string{
+						Description: "A libsonnet file called \"bar\"\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
+						Params: map[string]string{
 							"bar":            "a param called \"bar\"",
 							"barbar":         "a param called \"barbar\"",
 							"no_description": "",
 						},
-						retrn: "a new \"bar\"",
+						Retrn: "a new \"bar\"",
 					},
 				},
 			},
@@ -82,26 +82,26 @@ func TestParseJsonnetFile(t *testing.T) {
 		if err != nil {
 			t.Errorf("Unexpected error getting Jsonnet files: %s", err)
 		}
-		if jf.name != test.expect.name {
-			t.Errorf("Expected jsonnetFile name %q, got %q", test.expect.name, jf.name)
+		if jf.Name != test.expect.Name {
+			t.Errorf("Expected jsonnetFile name %q, got %q", test.expect.Name, jf.Name)
 		}
-		if len(jf.functions) != len(test.expect.functions) {
-			t.Errorf("Expected %d function(s), got %d", len(test.expect.functions), len(jf.functions))
+		if len(jf.Functions) != len(test.expect.Functions) {
+			t.Errorf("Expected %d function(s), got %d", len(test.expect.Functions), len(jf.Functions))
 		}
-		for i, fn := range jf.functions {
-			if fn.description != test.expect.functions[i].description {
-				t.Errorf("Expected description %q, got %q", test.expect.functions[i].description, fn.description)
+		for i, fn := range jf.Functions {
+			if fn.Description != test.expect.Functions[i].Description {
+				t.Errorf("Expected description %q, got %q", test.expect.Functions[i].Description, fn.Description)
 			}
-			if len(fn.params) != len(test.expect.functions[i].params) {
-				t.Errorf("Expected %d param(s), got %d", len(test.expect.functions[i].params), len(fn.params))
+			if len(fn.Params) != len(test.expect.Functions[i].Params) {
+				t.Errorf("Expected %d param(s), got %d", len(test.expect.Functions[i].Params), len(fn.Params))
 			}
-			for param, desc := range fn.params {
-				if desc != test.expect.functions[i].params[param] {
-					t.Errorf("Expected param descirption %q for %q, got %q", test.expect.functions[i].params[param], param, desc)
+			for param, desc := range fn.Params {
+				if desc != test.expect.Functions[i].Params[param] {
+					t.Errorf("Expected param descirption %q for %q, got %q", test.expect.Functions[i].Params[param], param, desc)
 				}
 			}
-			if fn.retrn != test.expect.functions[i].retrn {
-				t.Errorf("Expected return %q, got %q", test.expect.functions[i].retrn, fn.retrn)
+			if fn.Retrn != test.expect.Functions[i].Retrn {
+				t.Errorf("Expected return %q, got %q", test.expect.Functions[i].Retrn, fn.Retrn)
 			}
 		}
 	}
