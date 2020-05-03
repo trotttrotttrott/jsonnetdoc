@@ -18,6 +18,7 @@ import (
 
 type jsonnetFunction struct {
 	Description string            `json:"description"`
+	Name        string            `json:"name"`
 	Params      map[string]string `json:"params"`
 	Return      string            `json:"return"`
 }
@@ -107,6 +108,8 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 	for _, doc := range docs {
 		var desc [][]byte
 		descRegexp := regexp.MustCompile(`(\* [^@].+|\s\*$)`)
+		var name []byte
+		nameRegexp := regexp.MustCompile(`\* @name.+`)
 		params := map[string]string{}
 		paramRegexp := regexp.MustCompile(`\* @param.+`)
 		var retrn []byte
@@ -115,6 +118,8 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 			switch {
 			case descRegexp.Match(l):
 				desc = append(desc, bytes.TrimLeft(l, "* "))
+			case nameRegexp.Match(l):
+				name = bytes.TrimPrefix(bytes.TrimLeft(l, " "), []byte("* @name "))
 			case paramRegexp.Match(l):
 				param := bytes.SplitN(
 					bytes.TrimPrefix(bytes.TrimLeft(l, " "), []byte("* @param ")),
@@ -126,13 +131,14 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 					params[string(param[0])] = ""
 				}
 			case retrnRegexp.Match(l):
-				retrn = bytes.TrimLeft(l, "* @return")
+				retrn = bytes.TrimPrefix(bytes.TrimLeft(l, " "), []byte("* @return "))
 			}
 		}
 		jf.Functions = append(
 			jf.Functions,
 			jsonnetFunction{
 				Description: string(bytes.Join(desc, []byte("\n"))),
+				Name:        string(name),
 				Params:      params,
 				Return:      string(retrn),
 			},
@@ -144,8 +150,15 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 func generateMarkdown(apiDocs []jsonnetFile) (string, error) {
 	md := []string{"# API Docs"}
 	for _, jfile := range apiDocs {
-		md = append(md, fmt.Sprintf("## %s", jfile.Name))
+		if len(jfile.Functions) == 0 {
+			md = append(md, fmt.Sprintf("## %s", jfile.Name))
+		}
 		for _, jfunc := range jfile.Functions {
+			if jfunc.Name == "" {
+				md = append(md, fmt.Sprintf("## %s", jfile.Name))
+			} else {
+				md = append(md, fmt.Sprintf("## %s.%s", jfile.Name, jfunc.Name))
+			}
 			md = append(md, jfunc.Description)
 			params := make([]string, 0, len(jfunc.Params))
 			for k := range jfunc.Params {

@@ -50,6 +50,7 @@ func TestParseJsonnetFile(t *testing.T) {
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
 						Description: "Description text, file: foo, function: new\n\n\n",
+						Name:        "new",
 						Params: map[string]string{
 							"foo": "a param called \"foo\"",
 							"moo": "a param called \"moo\"",
@@ -69,6 +70,7 @@ func TestParseJsonnetFile(t *testing.T) {
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
 						Description: "Description text, file: bar, function: new\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
+						Name:        "",
 						Params: map[string]string{
 							"bar":            "a param called \"bar\"",
 							"barbar":         "a param called \"barbar\"",
@@ -96,6 +98,9 @@ func TestParseJsonnetFile(t *testing.T) {
 			if fn.Description != test.expect.Functions[i].Description {
 				t.Errorf("Expected description %q, got %q", test.expect.Functions[i].Description, fn.Description)
 			}
+			if fn.Name != test.expect.Functions[i].Name {
+				t.Errorf("Expected name %q, got %q", test.expect.Functions[i].Name, fn.Name)
+			}
 			if len(fn.Params) != len(test.expect.Functions[i].Params) {
 				t.Errorf("Expected %d param(s), got %d", len(test.expect.Functions[i].Params), len(fn.Params))
 			}
@@ -112,9 +117,6 @@ func TestParseJsonnetFile(t *testing.T) {
 }
 
 func TestGenerateMarkdown(t *testing.T) {
-
-	t.Skip()
-
 	tests := map[string]struct {
 		path   string
 		expect string
@@ -122,14 +124,16 @@ func TestGenerateMarkdown(t *testing.T) {
 		"foo": {
 			path: "testdata/foo.jsonnet",
 			expect: `# API Docs
-## foo
+## foo.new
 Description text, file: foo, function: new
 
+
+
+* **aoo**: a param called "aoo"
 * **foo**: a param called "foo"
 * **moo**: a param called "moo"
 * **poo**: a param called "poo"
 * **roo**: a param called "roo"
-* **aoo**: a param called "aoo"
 
 _returns_ a new "foo"`,
 		},
@@ -144,7 +148,7 @@ _returns_ a new "foo"`,
 			t.Errorf("Unexpected error parsing markdown: %s", err)
 		}
 		if md != test.expect {
-			t.Errorf("Expected:\n%s\n\ngot:\n\n%s", test.expect, md)
+			t.Errorf("Expected:\n\n%s\n\ngot:\n\n%s", test.expect, md)
 		}
 	}
 }

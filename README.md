@@ -3,7 +3,7 @@
 Documentation parser for [JSDoc](https://jsdoc.app/) style comments in Jsonnet.
 
 This is not even close to covering the complete spec. Only descriptions,
-`@param`, and `@return`. The initial motivation for this was
+`@name`, `@param`, and `@return`. The initial motivation for this was
 [Grafonnet](https://github.com/grafana/grafonnet-lib) which has used this
 documentation style for quite a while without something to parse it.
 
