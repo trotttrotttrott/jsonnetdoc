@@ -87,6 +87,8 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 		descRegexp := regexp.MustCompile(`(\* [^@].+|\s\*$)`)
 		params := map[string]string{}
 		paramRegexp := regexp.MustCompile(`\* @param.+`)
+		var retrn []byte
+		retrnRegexp := regexp.MustCompile(`\* @return.+`)
 		for _, l := range bytes.Split(doc, []byte("\n")) {
 			switch {
 			case descRegexp.Match(l):
@@ -98,6 +100,8 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 				} else if len(param) == 1 {
 					params[string(param[0])] = ""
 				}
+			case retrnRegexp.Match(l):
+				retrn = bytes.TrimLeft(l, "* @return")
 			}
 		}
 		jf.functions = append(
@@ -105,6 +109,7 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 			jsonnetFunction{
 				description: string(bytes.Join(desc, []byte("\n"))),
 				params:      params,
+				retrn:       string(retrn),
 			},
 		)
 	}
