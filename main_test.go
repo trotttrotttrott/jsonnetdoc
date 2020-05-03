@@ -47,12 +47,22 @@ func TestParseJsonnetFile(t *testing.T) {
 			"testdata/foo.jsonnet",
 			jsonnetFile{
 				name: "foo",
+				functions: []jsonnetFunction{
+					jsonnetFunction{
+						description: "A jsonnet file called \"foo\"\n",
+					},
+				},
 			},
 		},
 		"bar": {
 			"testdata/bar.libsonnet",
 			jsonnetFile{
 				name: "bar",
+				functions: []jsonnetFunction{
+					jsonnetFunction{
+						description: "A libsonnet file called \"bar\"\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
+					},
+				},
 			},
 		},
 	}
@@ -66,7 +76,12 @@ func TestParseJsonnetFile(t *testing.T) {
 			t.Errorf("Expected jsonnetFile name %q, got %q", test.expect.name, jf.name)
 		}
 		if len(jf.functions) != len(test.expect.functions) {
-			t.Errorf("Expected %d file(s), got %d", len(test.expect.functions), len(jf.functions))
+			t.Errorf("Expected %d function(s), got %d", len(test.expect.functions), len(jf.functions))
+		}
+		for i, fn := range jf.functions {
+			if fn.description != test.expect.functions[i].description {
+				t.Errorf("Expected description %q, got %q", test.expect.functions[i].description, fn.description)
+			}
 		}
 	}
 }

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/go-clix/cli"
@@ -73,6 +76,27 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 	_, f := path.Split(p)
 	name := strings.TrimSuffix(f, path.Ext(f))
 	jf.name = name
-
+	content, err := ioutil.ReadFile(p)
+	if err != nil {
+		return
+	}
+	r := regexp.MustCompile(`/\*\*(.|[\n])*\*/`)
+	docs := r.FindAll(content, -1)
+	for _, doc := range docs {
+		var desc [][]byte
+		descRegexp := regexp.MustCompile(`(\* [^@].+|\s\*$)`)
+		for _, l := range bytes.Split(doc, []byte("\n")) {
+			switch {
+			case descRegexp.Match(l):
+				desc = append(desc, bytes.TrimLeft(l, "* "))
+			}
+		}
+		jf.functions = append(
+			jf.functions,
+			jsonnetFunction{
+				description: string(bytes.Join(desc, []byte("\n"))),
+			},
+		)
+	}
 	return
 }
