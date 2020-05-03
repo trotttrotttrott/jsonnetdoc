@@ -49,7 +49,7 @@ func TestParseJsonnetFile(t *testing.T) {
 				Name: "foo",
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
-						Description: "A jsonnet file called \"foo\"\n",
+						Description: "Description text, file: foo, function: new\n\n\n",
 						Params: map[string]string{
 							"foo": "a param called \"foo\"",
 							"moo": "a param called \"moo\"",
@@ -68,7 +68,7 @@ func TestParseJsonnetFile(t *testing.T) {
 				Name: "bar",
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
-						Description: "A libsonnet file called \"bar\"\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
+						Description: "Description text, file: bar, function: new\nIts got a multi-line description!\n\nMulti-paragraph as well!\n",
 						Params: map[string]string{
 							"bar":            "a param called \"bar\"",
 							"barbar":         "a param called \"barbar\"",
@@ -123,7 +123,7 @@ func TestGenerateMarkdown(t *testing.T) {
 			path: "testdata/foo.jsonnet",
 			expect: `# API Docs
 ## foo
-A jsonnet file called "foo"
+Description text, file: foo, function: new
 
 * **foo**: a param called "foo"
 * **moo**: a param called "moo"

@@ -1,6 +1,6 @@
 {
   /**
-   * A libsonnet file called "bar"
+   * Description text, file: bar, function: new
    * Its got a multi-line description!
    *
    * Multi-paragraph as well!
