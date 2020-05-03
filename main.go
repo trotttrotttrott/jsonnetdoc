@@ -160,7 +160,7 @@ Generated API documentation from JSDoc style comments.
 			if jfunc.Name == "" {
 				md = append(md, fmt.Sprintf("## %s", jfile.Name))
 			} else {
-				md = append(md, fmt.Sprintf("## %s.%s", jfile.Name, jfunc.Name))
+				md = append(md, fmt.Sprintf("## %s", jfunc.Name))
 			}
 			md = append(md, jfunc.Description)
 			params := make([]string, 0, len(jfunc.Params))
