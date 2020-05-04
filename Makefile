@@ -1,8 +1,13 @@
+IMAGE=trotttrotttrott/jsonnetdoc
+TAG=$$(git rev-parse --short HEAD)
+
 test:
 	go test
 
 docker-build:
-	docker build -t trotttrotttrott/jsonnetdoc:$$(git rev-parse --short HEAD) .
+	docker build -t ${IMAGE}:${TAG} .
+	docker tag ${IMAGE}:${TAG} ${IMAGE}:latest
 
 docker-push:
-	docker push trotttrotttrott/jsonnetdoc:$$(git rev-parse --short HEAD)
+	docker push ${IMAGE}:${TAG}
+	docker push ${IMAGE}:latest
