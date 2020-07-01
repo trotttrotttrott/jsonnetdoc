@@ -10,6 +10,9 @@
    * @param roo a param called "roo"
    * @param aoo a param called "aoo"
    *
+   * @method addFoo(foo) adds a foo
+   * @method addBar(bar) adds a bar
+   *
    * @return a new "foo"
    */
   new(

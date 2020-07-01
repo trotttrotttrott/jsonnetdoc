@@ -49,7 +49,7 @@ func TestParseJsonnetFile(t *testing.T) {
 				Name: "foo",
 				Functions: []jsonnetFunction{
 					jsonnetFunction{
-						Description: "Description text, file: foo, function: new\n\n\n",
+						Description: "Description text, file: foo, function: new\n\n\n\n",
 						Name:        "foo.new",
 						Params: map[string]string{
 							"foo": "a param called \"foo\"",
@@ -57,6 +57,10 @@ func TestParseJsonnetFile(t *testing.T) {
 							"poo": "a param called \"poo\"",
 							"roo": "a param called \"roo\"",
 							"aoo": "a param called \"aoo\"",
+						},
+						Methods: map[string]string{
+							"addFoo(foo)": "adds a foo",
+							"addBar(bar)": "adds a bar",
 						},
 						Return: "a new \"foo\"",
 					},
@@ -140,13 +144,21 @@ Description text, file: foo, function: new
 
 
 
+
+@params
+
 * **aoo**: a param called "aoo"
 * **foo**: a param called "foo"
 * **moo**: a param called "moo"
 * **poo**: a param called "poo"
 * **roo**: a param called "roo"
 
-_returns_ a new "foo"`,
+@methods
+
+* **addBar(bar)**: adds a bar
+* **addFoo(foo)**: adds a foo
+
+@return a new "foo"`,
 		},
 	}
 	for testName, test := range tests {

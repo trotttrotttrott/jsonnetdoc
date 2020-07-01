@@ -20,6 +20,7 @@ type jsonnetFunction struct {
 	Description string            `json:"description"`
 	Name        string            `json:"name"`
 	Params      map[string]string `json:"params"`
+	Methods     map[string]string `json:"methods"`
 	Return      string            `json:"return"`
 }
 
@@ -112,6 +113,8 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 		nameRegexp := regexp.MustCompile(`\* @name.+`)
 		params := map[string]string{}
 		paramRegexp := regexp.MustCompile(`\* @param.+`)
+		methods := map[string]string{}
+		methodRegexp := regexp.MustCompile(`\* @method.+`)
 		var retrn []byte
 		retrnRegexp := regexp.MustCompile(`\* @return.+`)
 		for _, l := range bytes.Split(doc, []byte("\n")) {
@@ -130,6 +133,16 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 				} else if len(param) == 1 {
 					params[string(param[0])] = ""
 				}
+			case methodRegexp.Match(l):
+				method := bytes.SplitN(
+					bytes.TrimPrefix(bytes.TrimLeft(l, " "), []byte("* @method ")),
+					[]byte(" "), 2,
+				)
+				if len(method) > 1 {
+					methods[string(method[0])] = string(method[1])
+				} else if len(method) == 1 {
+					methods[string(method[0])] = ""
+				}
 			case retrnRegexp.Match(l):
 				retrn = bytes.TrimPrefix(bytes.TrimLeft(l, " "), []byte("* @return "))
 			}
@@ -140,6 +153,7 @@ func parseJsonnetFile(p string) (jf jsonnetFile, err error) {
 				Description: string(bytes.Join(desc, []byte("\n"))),
 				Name:        string(name),
 				Params:      params,
+				Methods:     methods,
 				Return:      string(retrn),
 			},
 		)
@@ -163,16 +177,30 @@ Generated API documentation from JSDoc style comments.
 				md = append(md, fmt.Sprintf("## %s", jfunc.Name))
 			}
 			md = append(md, jfunc.Description)
-			params := make([]string, 0, len(jfunc.Params))
-			for k := range jfunc.Params {
-				params = append(params, k)
+			if len(jfunc.Params) > 0 {
+				md = append(md, "@params\n")
+				params := make([]string, 0, len(jfunc.Params))
+				for k := range jfunc.Params {
+					params = append(params, k)
+				}
+				sort.Strings(params)
+				for _, param := range params {
+					md = append(md, fmt.Sprintf("* **%s**: %s", param, jfunc.Params[param]))
+				}
 			}
-			sort.Strings(params)
-			for _, param := range params {
-				md = append(md, fmt.Sprintf("* **%s**: %s", param, jfunc.Params[param]))
+			if len(jfunc.Methods) > 0 {
+				md = append(md, "\n@methods\n")
+				methods := make([]string, 0, len(jfunc.Methods))
+				for k := range jfunc.Methods {
+					methods = append(methods, k)
+				}
+				sort.Strings(methods)
+				for _, method := range methods {
+					md = append(md, fmt.Sprintf("* **%s**: %s", method, jfunc.Methods[method]))
+				}
 			}
 			if jfunc.Return != "" {
-				md = append(md, fmt.Sprintf("\n_returns_ %s", jfunc.Return))
+				md = append(md, fmt.Sprintf("\n@return %s", jfunc.Return))
 			}
 		}
 	}
